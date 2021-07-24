@@ -181,6 +181,28 @@ var multiply = function(x, y) {
 // 13. Write a function that divides two numbers without using the / operator or
 // Math methods to arrive at an approximate quotient (ignore decimal endings).
 var divide = function(x, y) {
+  if (y === 0) {
+    return undefined;
+  }
+  if (x === 0) {
+    return 0;
+  }
+  if (x === y) {
+    return 1;
+  }
+  if (x < y) {
+    return 0;
+  }
+  var isNeg = false;
+  if (x < 0) {
+    isNeg = true;
+    x = -x;
+  }
+  if (y < 0) {
+    isNeg = true;
+    y = -y;
+  }
+  return isNeg ? -(divide(x - y, y)) : divide(x - y, y) + 1;
 };
 
 // 14. Find the greatest common divisor (gcd) of two positive numbers. The GCD of two
@@ -237,6 +259,16 @@ var rMap = function(array, callback) {
 // countKeysInObj(obj, 'r') // 1
 // countKeysInObj(obj, 'e') // 2
 var countKeysInObj = function(obj, key) {
+  var count = 0;
+  for (var prop in obj) {
+    if (prop === key) {
+      count++;
+    }
+    if (obj[prop] instanceof Object) {
+      count += countKeysInObj(obj[prop], key);
+    }
+  }
+  return count;
 };
 
 // 23. Write a function that counts the number of times a value occurs in an object.
@@ -244,11 +276,31 @@ var countKeysInObj = function(obj, key) {
 // countValuesInObj(obj, 'r') // 2
 // countValuesInObj(obj, 'e') // 1
 var countValuesInObj = function(obj, value) {
+  var count = 0;
+  for (var key in obj) {
+    if (obj[key] === value) {
+      count++;
+    }
+    if (obj[key] instanceof Object) {
+      count += countValuesInObj(obj[key], value);
+    }
+  }
+  return count;
 };
 
 // 24. Find all keys in an object (and nested objects) by a provided name and rename
 // them to a provided new name while preserving the value stored at that key.
 var replaceKeysInObj = function(obj, oldKey, newKey) {
+  for (var key in obj) {
+    if (key === oldKey) {
+      obj[newKey] = obj[key];
+      delete obj[key];
+    }
+    if (obj[key] instanceof Object) {
+      replaceKeysInObj(obj[key], oldKey, newKey);
+    }
+  }
+  return obj;
 };
 
 // 25. Get the first n Fibonacci numbers. In the Fibonacci sequence, each subsequent
